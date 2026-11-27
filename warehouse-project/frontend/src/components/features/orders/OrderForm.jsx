@@ -73,15 +73,17 @@ export default function OrderForm({ products, warehouses, loading, error, onRetr
         note: parsed.data.note,
       });
     } catch (requestError) {
-      const message = requestError?.response?.data?.message ?? "Unable to place the order.";
-      const details = requestError?.response?.data?.error?.details;
+      const response = requestError?.response?.data;
+      const message = response?.message ?? response?.error?.message ?? "Unable to place the order.";
+      const details = response?.error?.details;
       const itemIndex = parsed.data.items.findIndex((item) => (
         !details?.product || String(item.product) === String(details.product)
       ));
-      if (requestError?.response?.data?.error?.code === "INSUFFICIENT_STOCK" && itemIndex >= 0) {
+      if (response?.error?.code === "INSUFFICIENT_STOCK" && itemIndex >= 0) {
+        const available = Number(details?.available);
         setError(`items.${itemIndex}.quantity`, {
           type: "server",
-          message: `${message}. Available: ${Number(details?.available ?? 0)}.`,
+          message: Number.isFinite(available) ? `${message}: available ${available}` : message,
         });
       } else {
         setError("root.server", { type: "server", message });

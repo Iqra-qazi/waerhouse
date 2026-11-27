@@ -5,7 +5,13 @@ import productService from "../services/productService.js";
 import warehouseService from "../services/warehouseService.js";
 
 function getErrorMessage(error, fallback) {
-  return error?.response?.data?.message ?? error?.message ?? fallback;
+  const response = error?.response?.data;
+  const message = response?.message ?? response?.error?.message ?? error?.message ?? fallback;
+  const available = response?.error?.details?.available;
+  if (response?.error?.code === "INSUFFICIENT_STOCK" && Number.isFinite(Number(available))) {
+    return `${message}: available ${Number(available)}`;
+  }
+  return message;
 }
 
 export default function useOrderForm() {
