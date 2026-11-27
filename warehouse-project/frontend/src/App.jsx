@@ -9,7 +9,6 @@ import AppLayout from "./components/layout/AppLayout";
 import { appRoles } from "./config/navigation";
 import RoleGuard from "./routes/RoleGuard";
 import DashboardRedirect from "./pages/dashboard/DashboardRedirect";
-import PlaceholderPage from "./pages/PlaceholderPage";
 import UnauthorizedPage from "./pages/UnauthorizedPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import UsersPage from "./pages/UsersPage";
@@ -17,15 +16,15 @@ import WarehousesPage from "./pages/WarehousesPage";
 import ProductsPage from "./pages/ProductsPage";
 import StockPage from "./pages/StockPage";
 import StockTransactionsPage from "./pages/StockTransactionsPage";
+import OrdersPage from "./pages/OrdersPage";
+import OrderCreatePage from "./pages/OrderCreatePage";
+import MyOrdersPage from "./pages/MyOrdersPage";
+import SupplyRequestsPage from "./pages/SupplyRequestsPage";
+import MyProductsPage from "./pages/MyProductsPage";
+import MyWarehousesPage from "./pages/MyWarehousesPage";
+import ReportsPage from "./pages/ReportsPage";
+import ProfilePage from "./pages/ProfilePage";
 import { ROLES } from "./config/roles.js";
-
-const placeholderRoutes = [
-  { path: "orders", roles: [ROLES.ADMIN, ROLES.MANAGER] },
-  { path: "orders/create", roles: [ROLES.SALES] },
-  { path: "orders/my", roles: [ROLES.SALES] },
-  { path: "supply-requests", roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.SUPPLIER] },
-  { path: "reports", roles: [ROLES.ADMIN] },
-];
 
 export default function App() {
   return (
@@ -85,22 +84,67 @@ export default function App() {
                 </RoleGuard>
               }
             />
-            {placeholderRoutes.map(({ path, roles }) => (
-              <Route
-                key={path}
-                path={path}
-                element={
-                  <RoleGuard allowedRoles={roles}>
-                    <PlaceholderPage />
-                  </RoleGuard>
-                }
-              />
-            ))}
+            <Route
+              path="orders"
+              element={
+                <RoleGuard allowedRoles={[ROLES.ADMIN, ROLES.MANAGER]}>
+                  <OrdersPage />
+                </RoleGuard>
+              }
+            />
+            <Route
+              path="orders/create"
+              element={
+                <RoleGuard allowedRoles={[ROLES.SALES]}>
+                  <OrderCreatePage />
+                </RoleGuard>
+              }
+            />
+            <Route
+              path="my-orders"
+              element={
+                <RoleGuard allowedRoles={[ROLES.SALES]}>
+                  <MyOrdersPage />
+                </RoleGuard>
+              }
+            />
+            <Route
+              path="supply-requests"
+              element={
+                <RoleGuard allowedRoles={[ROLES.ADMIN, ROLES.MANAGER, ROLES.SUPPLIER]}>
+                  <SupplyRequestsPage />
+                </RoleGuard>
+              }
+            />
+            <Route
+              path="my-products"
+              element={
+                <RoleGuard allowedRoles={[ROLES.SUPPLIER]}>
+                  <MyProductsPage />
+                </RoleGuard>
+              }
+            />
+            <Route
+              path="my-warehouses"
+              element={
+                <RoleGuard allowedRoles={[ROLES.MANAGER]}>
+                  <MyWarehousesPage />
+                </RoleGuard>
+              }
+            />
+            <Route
+              path="reports"
+              element={
+                <RoleGuard allowedRoles={[ROLES.ADMIN, ROLES.MANAGER]}>
+                  <ReportsPage />
+                </RoleGuard>
+              }
+            />
             <Route
               path="profile"
               element={
                 <RoleGuard allowedRoles={appRoles}>
-                  <PlaceholderPage title="Profile" />
+                  <ProfilePage />
                 </RoleGuard>
               }
             />

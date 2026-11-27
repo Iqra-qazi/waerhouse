@@ -1,22 +1,13 @@
+import { lazy, Suspense } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { ROLES } from "../../config/roles.js";
+import Skeleton from "../../components/ui/Skeleton";
 
-export function AdminDashboard() {
-  return <h1 className="text-2xl font-bold text-white">Admin Dashboard</h1>;
-}
-
-export function ManagerDashboard() {
-  return <h1 className="text-2xl font-bold text-white">Manager Dashboard</h1>;
-}
-
-export function SupplierDashboard() {
-  return <h1 className="text-2xl font-bold text-white">Supplier Dashboard</h1>;
-}
-
-export function SalesDashboard() {
-  return <h1 className="text-2xl font-bold text-white">Sales Dashboard</h1>;
-}
+const AdminDashboard = lazy(() => import("../../components/features/dashboard/AdminDashboard"));
+const ManagerDashboard = lazy(() => import("../../components/features/dashboard/ManagerDashboard"));
+const SupplierDashboard = lazy(() => import("../../components/features/dashboard/SupplierDashboard"));
+const SalesDashboard = lazy(() => import("../../components/features/dashboard/SalesDashboard"));
 
 const dashboardsByRole = {
   [ROLES.ADMIN]: AdminDashboard,
@@ -28,5 +19,18 @@ const dashboardsByRole = {
 export default function DashboardRedirect() {
   const { user } = useAuth();
   const Dashboard = dashboardsByRole[user?.role];
-  return Dashboard ? <Dashboard /> : <Navigate to="/unauthorized" replace />;
+  if (!Dashboard) return <Navigate to="/unauthorized" replace />;
+  return (
+    <Suspense fallback={
+      <div className="space-y-5" aria-label="Loading dashboard">
+        <Skeleton className="h-10 w-60" />
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {Array.from({ length: 4 }, (_, index) => <Skeleton key={index} className="h-28 rounded-2xl" />)}
+        </div>
+        <Skeleton className="h-72 rounded-2xl" />
+      </div>
+    }>
+      <Dashboard />
+    </Suspense>
+  );
 }

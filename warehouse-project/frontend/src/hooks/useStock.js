@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 import { ROLES } from "../config/roles.js";
@@ -29,13 +30,14 @@ function getStockState(entry) {
 
 export default function useStock() {
   const { user } = useAuth();
+  const [searchParams] = useSearchParams();
   const [stock, setStock] = useState([]);
   const [products, setProducts] = useState([]);
   const [warehouses, setWarehouses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [search, setSearchState] = useState("");
-  const [warehouse, setWarehouseState] = useState("");
+  const [warehouse, setWarehouseState] = useState(() => searchParams.get("warehouse") ?? "");
   const [lowStockOnly, setLowStockOnly] = useState(false);
   const [page, setPageState] = useState(1);
 
@@ -61,6 +63,11 @@ export default function useStock() {
   useEffect(() => {
     loadStock();
   }, [loadStock]);
+
+  useEffect(() => {
+    const warehouseId = searchParams.get("warehouse");
+    if (warehouseId) setWarehouseState(warehouseId);
+  }, [searchParams]);
 
   const normalizedStock = useMemo(() => {
     const productsById = new Map(products.map((product) => [getId(product), product]));

@@ -1,7 +1,7 @@
 require("dotenv").config();
 const { MongoMemoryServer } = require("mongodb-memory-server");
 const mongoose = require("mongoose");
-const app = require("./server");
+const app = require("./app");
 const User = require("./models/User");
 const Warehouse = require("./models/Warehouse");
 const Product = require("./models/Product");
@@ -46,9 +46,9 @@ function expectStatus(res, status) {
 
 async function main() {
   const mongo = await MongoMemoryServer.create();
-  process.env.MONGODB_URI = mongo.getUri();
+  process.env.MONGO_URI = mongo.getUri();
   process.env.JWT_SECRET = "api-test-secret";
-  await mongoose.connect(process.env.MONGODB_URI);
+  await mongoose.connect(process.env.MONGO_URI);
 
   const users = await User.create([
     { name: "Admin", email: "admin@test.local", password: "Admin123!", role: "admin" },
@@ -65,18 +65,18 @@ async function main() {
     expectStatus(res, 200);
     return res.body.data.token;
   };
+  const server = app.listen(port);
+  await new Promise((resolve) => server.once("listening", resolve));
+
   const admin = await login("admin@test.local", "Admin123!");
   const manager = await login("manager@test.local", "Manager123!");
   const sales = await login("sales@test.local", "Sales123!");
   const supplier = await login("supplier@test.local", "Supplier123!");
 
-  const server = app.listen(port);
-  await new Promise((resolve) => server.once("listening", resolve));
-
   await check("Health endpoint", async () => {
     const res = await request("GET", "/api/health");
     expectStatus(res, 200);
-    if (res.body.success !== true) throw new Error("success is not true");
+    if (res.body.ok !== true) throw new Error("ok is not true");
   });
   await check("Public product catalog", async () => {
     const res = await request("GET", "/api/products");

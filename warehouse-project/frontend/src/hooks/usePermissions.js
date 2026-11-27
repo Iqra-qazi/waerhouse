@@ -9,5 +9,10 @@ export default function usePermissions() {
     canManageProducts: role === ROLES.ADMIN,
     canViewProductStock: role === ROLES.ADMIN || role === ROLES.MANAGER,
     canManageStock: role === ROLES.ADMIN || role === ROLES.MANAGER,
+    canManageOrders: role === ROLES.ADMIN || role === ROLES.MANAGER,
+    canCreateOrder: role === ROLES.SALES,
+    canReviewSupplyRequests: role === ROLES.ADMIN || role === ROLES.MANAGER,
+    canCreateSupplyRequest: role === ROLES.SUPPLIER,
+    canViewReports: role === ROLES.ADMIN || role === ROLES.MANAGER,
   };
 }

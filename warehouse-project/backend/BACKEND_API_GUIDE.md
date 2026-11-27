@@ -5,8 +5,8 @@
 - Development: `http://localhost:5000`
 - API prefix: `/api`
 - Default port: `5000`
-- Health: `GET /api/health`
-- Frontend origin allowed by CORS: `http://localhost:5173`
+- Health: `GET /api/health` returns `{"ok":true}`.
+- Frontend origins are configured with `CLIENT_URL` (comma-separated); `http://localhost:5173` is also allowed for local development.
 
 ## Start
 
@@ -16,7 +16,7 @@ npm install
 npm start
 ```
 
-Set `MONGODB_URI`, `JWT_SECRET`, and optional ImageKit variables. Copy [`.env.example`](.env.example) to `.env`.
+Set `MONGO_URI`, `JWT_SECRET`, `CLIENT_URL`, and optional ImageKit variables. `CLIENT_URL` accepts a comma-separated list of frontend origins. Copy [`.env.example`](.env.example) to `.env`.
 
 ## Authentication
 
